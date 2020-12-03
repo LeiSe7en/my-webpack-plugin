@@ -4,10 +4,11 @@
   "description": "",
   "main": "webpack.config.js",
   "dependencies": {
-    "webpack": "^5.9.0",
+    "webpack": "^4.31.0"
+  },
+  "devDependencies": {
     "webpack-cli": "^4.2.0"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
