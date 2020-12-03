@@ -1,5 +1,6 @@
 const fs = require('fs')
 const {resolve} = require('path')
+const { SyncHook, AsyncParallelHook } = require('tapable')
 const formatBytes = function (bytes) {
 	const k = 1024 // 1kb
 	// Math.log(bytes) / Math.log(k) 就是看看bytes是k的多少次方
@@ -15,6 +16,9 @@ const formatBytes = function (bytes) {
 class BundlesizeWebpackPlugin {
 	constructor (options) {
 		this.options = options || { sizeLimit: 3 }
+		this.hooks = {
+			setSize: new SyncHook([size])
+		}
 	}
 	//Every webpack plugin must have an apply method in them which is called by webpack
 	apply (compiler) {
