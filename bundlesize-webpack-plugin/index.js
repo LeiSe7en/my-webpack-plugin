@@ -17,25 +17,31 @@ class BundlesizeWebpackPlugin {
 	constructor (options) {
 		this.options = options || { sizeLimit: 3 }
 		this.hooks = {
-			setSize: new SyncHook([size])
+			emitSize: new SyncHook(['size'])
 		}
 	}
 	//Every webpack plugin must have an apply method in them which is called by webpack
 	apply (compiler) {
 		// compiler is given by webpack which is an instance of compiler
-		compiler.hooks.done.tap('hahah', stats => {
+		// 这个tap方法的name 参数需要mean something. 原因是为了在stacktrace 的时候方便知道是哪个plugin
+		compiler.hooks.done.tap('BundleSizeWebpackPlugin', stats => {
 			const { path, filename } = stats.compilation.options.output
 			const bundlePath = resolve(path, filename)
 			const { size } = fs.statSync(bundlePath)
 			const { bundleSize, fullInfo } = formatBytes(size)
 			if (bundleSize < this.options.sizeLimit) {
-				console.log(
-				 "Safe:Bundle-Size",
-         fullInfo,
-         "\n SIZE LIMIT:",
-         this.options.sizeLimit)
+				this.hooks.emitSize.call(bundleSize)
 			}
 		})
+
+		compiler.hooks.emit.tapAsync('test emit async hook', (compilation, callback) => {
+			const compilationHash = compilation.hash
+			console.log(compilation.mainTemplate.getPublicPath({ hash: compilationHash }))
+		})
+	}
+
+	setSize () {
+
 	}
 }
 
